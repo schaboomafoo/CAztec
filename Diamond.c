@@ -5,38 +5,36 @@
 #include <math.h>
 
 // Global variables
-int vertices[1024][8][8];
+int vertices[32768][10][10];
 int tilingsGenerated = 0; // Amount of tilings completed
 
 // Function declarations
-void recursion(int board[8][8], int direction);
-int isComplete(int board[8][8]);
-int canRight(int board[8][8], int row, int col);
-int canDown(int board[8][8], int row, int col);
-void printArray(int array[8][8]);
+void recursion(int board[10][10], int direction);
+int isComplete(int board[10][10]);
+int canRight(int board[10][10], int row, int col);
+int canDown(int board[10][10], int row, int col);
+void printArray(int array[10][10]);
 
 int main() {
-    int example[8][8];
+    int example[10][10];
     memset(example, 0, sizeof(example)); // Initialize example with zeros
 
     // Generate example for layer printing
-    for (int row = 0; row < 8; row++) {
-        for (int col = 0; col < 8; col++) {
-            if ((row < 2 && col < 2) || (row > 5 && col > 5) || (row < 2 && col > 5) || (row > 5 && col < 2))
+    for (int row = 0; row < 10; row++) {
+        for (int col = 0; col < 10; col++) {
+            if((row==0 || row==9) && (col<4 || col>5))
                 example[row][col] = -1;
-            else if (row == 7 && (col == 2 || col == 5))
+            else if((row==1 || row==8) && (col<3 || col>6))
                 example[row][col] = -1;
-            else if (row == 0 && (col == 2 || col == 5))
+            else if((row==2 || row==7) && (col<2 || col>7))
                 example[row][col] = -1;
-            else if (col == 7 && (row == 2 || row == 5))
-                example[row][col] = -1;
-            else if (col == 0 && (row == 2 || row == 5))
+            else if((row==3 || row==6) && (col==0 || col==9))
                 example[row][col] = -1;
         }
     }
 
-    // Initialize all 1024 grids
-    for (int a = 0; a < 1024; a++) 
+    // Initialize all 32768 grids
+    for (int a = 0; a < 32768; a++) 
         memcpy(vertices[a],example,sizeof(vertices[0]));
 
     // Recursive start
@@ -61,10 +59,10 @@ int main() {
 */
 
     //sum for average
-    int sums[8][8]={0};
-    for(int row=0;row<8;row++){
-        for(int col=0;col<8;col++){
-            for(int it=0;it<1024;it++){
+    int sums[10][10]={0};
+    for(int row=0;row<10;row++){
+        for(int col=0;col<10;col++){
+            for(int it=0;it<32768;it++){
                 if(vertices[it][row][col]==-1) //outside diamond, break
                     break;
                 else{
@@ -78,10 +76,10 @@ int main() {
 
     printf("\n%d distinct domino tilings generated\n\nAverage domino orientation at each vertex\nA horizontal domino contributes 1 to the average, while a vertical domino contributes 0\n\n",tilingsGenerated);
 
-    double average[8][8]={0};
-    for(int row=0;row<8;row++){
-        for(int col=0;col<8;col++){
-            average[row][col] = (double)sums[row][col]/1024;
+    double average[10][10]={0};
+    for(int row=0;row<10;row++){
+        for(int col=0;col<10;col++){
+            average[row][col] = (double)sums[row][col]/32768;
             if (average[row][col] == 0) {
                 printf(" [----] "); // Print 'X' for -1 or 0 (background)
             } else {
@@ -97,7 +95,7 @@ int main() {
 
 
 
-void recursion(int board[8][8], int direction) {
+void recursion(int board[10][10], int direction) {
     int pos = isComplete(board);
 
     /*
@@ -154,9 +152,9 @@ void recursion(int board[8][8], int direction) {
 }
 
 // Return -1 if board is complete, otherwise return row*10 + col
-int isComplete(int board[8][8]) {
-    for (int row = 0; row < 8; row++) {
-        for (int col = 0; col < 8; col++) {
+int isComplete(int board[10][10]) {
+    for (int row = 0; row < 10; row++) {
+        for (int col = 0; col < 10; col++) {
             if (board[row][col] == 0)
                 return row * 10 + col;
         }
@@ -164,22 +162,22 @@ int isComplete(int board[8][8]) {
     return -1;
 }
 
-int canRight(int board[8][8], int row, int col) {
-    if (col == 7)
+int canRight(int board[10][10], int row, int col) {
+    if (col == 9)
         return 0;
     return board[row][col + 1] == 0;
 }
 
-int canDown(int board[8][8], int row, int col) {
-    if (row == 7)
+int canDown(int board[10][10], int row, int col) {
+    if (row == 9)
         return 0;
     return board[row + 1][col] == 0;
 }
 
-// Function to print an 8x8 array
-void printArray(int array[8][8]) {
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
+// Function to print an 10x10 array
+void printArray(int array[10][10]) {
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 10; j++) {
             if (array[i][j] == -1 || array[i][j] == 0) {
                 printf(" X "); // Print 'X' for -1 (background)
             } else {
